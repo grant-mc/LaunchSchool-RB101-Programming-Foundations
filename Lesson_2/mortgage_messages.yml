@@ -1,0 +1,24 @@
+en:
+  lines: "----------------------------------------------------------------------"
+  welcome: |
+    Welcome to Calculator! We're going to calculate your monthly loan payment
+    Enter your name: 
+  valid_name: "Make sure to enter a valid name."
+  info_request: |
+    We'll need three pieces of information from you:
+      1) Your total loan amount
+      2) Your Annual Percentage Rate (APR)
+      3) Your loan duration in months
+  amt_input: "What's the total value of your mortgage?"
+  apr_input: "What's your APR as a decimal? e.g 5% = .05"
+  m_y_input: "Is your loan duration in months or years?"
+  term_input: "How long is the term of your loan?"
+  valid_duration: "Hmm.. that doesn't look right"
+  valid_term: "Hmm that doesn't look like a vaild number. Please enter a whole number"
+  second_num: "What's the second number?"
+  thanks: Thank You!
+  valid_num: "Hmm... that doesnt look like a valid number"
+  valid_p: "Hmm... that doesnt look like a valid percentage"
+  valid_operator: "Must choose 1, 2, 3 or 4"
+  repeat?: "Do you want to perform another calculation? (Y to calculate again)"
+  goodbye: "Thank you for using the calculator. Good bye!"
