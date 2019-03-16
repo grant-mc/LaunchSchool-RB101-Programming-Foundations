@@ -31,6 +31,18 @@ def display_board(brd)
 end
 # rubocop:enable Metrics/AbcSize
 
+def determine_current_player(user_choice)
+  case user_choice
+    when 'player' then 'player'
+    when 'computer' then 'comp'
+    when 'choose' then ['player', 'comp'].sample
+  end
+end
+
+def alternate_player(current_player)
+  current_player == 'player' ? 'comp' : 'player'
+end
+
 def intitialize_board
   new_board = {}
   (1..9).each { |num| new_board[num] = INITIAL_MARKER }
@@ -52,6 +64,14 @@ def joinor (arr, sep = ', ', fin = 'or')
     end
 end
 
+def place_piece!(brd, current_player)
+  if current_player == 'player'
+    brd[player_places_piece!(brd)] = PLAYER_MARKER
+  else
+    brd[computer_places_piece!(brd)] = COMP_MARKER
+  end
+end
+
 def player_places_piece!(brd)
   square = ''
   loop do
@@ -61,12 +81,27 @@ def player_places_piece!(brd)
     prompt "Sorry, that's not a valid choice."
   end
 
-  brd[square] = PLAYER_MARKER
+  square
 end
 
 def computer_places_piece!(brd)
-  square = empty_squares(brd).sample
-  brd[square] = COMP_MARKER
+  square = nil
+  WINNING_LINES.each do |line|
+    player = find_at_risk_square(line, brd, PLAYER_MARKER)
+    comp = find_at_risk_square(line, brd, COMP_MARKER)
+    case 
+      when comp != nil then square = comp
+      when player != nil then square = player
+      when brd[5] == INITIAL_MARKER then square = 5
+    end
+    break if square
+  end
+
+  if !square
+    square = empty_squares(brd).sample
+  end
+
+  square
 end
 
 def board_full?(brd)
@@ -77,12 +112,19 @@ def someone_won?(brd)
   !!detect_winner(brd)
 end
 
+def find_at_risk_square(line, board, marker)
+  if board.values_at(*line).count(marker) == 2
+    board.select{|k,v| line.include?(k) && v == INITIAL_MARKER}.keys.first
+  else
+    nil
+  end
+end
+
 def detect_winner(brd)
   WINNING_LINES.each do |line|
     if brd.values_at(*line).count(PLAYER_MARKER) == 3
       return 'Player'
     elsif brd.values_at(*line).count(COMP_MARKER) == 3
-      detect_overall_winner(comp_score)
       return 'Computer'
     end
   end
@@ -93,13 +135,14 @@ comp_score = 0
 player_score = 0
 loop do
   board = intitialize_board
+  prompt "Who would you like to go first? (player, computer, choose)"
+  user_choice = gets.chomp
+  current_player = determine_current_player(user_choice)
 
   loop do
     display_board(board)
-    player_places_piece!(board)
-    break if someone_won?(board) || board_full?(board)
-
-    computer_places_piece!(board)
+    place_piece!(board, current_player)
+    current_player = alternate_player(current_player)
     break if someone_won?(board) || board_full?(board)
   end
 
